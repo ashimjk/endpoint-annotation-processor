@@ -5,7 +5,6 @@ import io.ashimjk.annotationprocessor.endpoints.EndpointTypeMapper.GetEndpointTy
 import io.ashimjk.annotationprocessor.endpoints.EndpointTypeMapper.PatchEndpointTypeMapper;
 import io.ashimjk.annotationprocessor.endpoints.EndpointTypeMapper.PostEndpointTypeMapper;
 import io.ashimjk.annotationprocessor.endpoints.EndpointTypeMapper.RequestEndpointTypeMapper;
-import lombok.SneakyThrows;
 
 import javax.annotation.processing.*;
 import javax.annotation.security.RolesAllowed;
@@ -24,10 +23,14 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 @SupportedAnnotationTypes("javax.annotation.security.RolesAllowed")
 public class EndpointProcessor extends AbstractProcessor {
 
+    private final Endpoints endpoints;
+
+    public EndpointProcessor() {
+        endpoints = new Endpoints();
+    }
+
     @Override
-    @SneakyThrows
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        final Endpoints endpoints = new Endpoints();
 
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(RolesAllowed.class)) {
             String[] roles = annotatedElement.getAnnotation(RolesAllowed.class).value();
@@ -41,13 +44,15 @@ public class EndpointProcessor extends AbstractProcessor {
                     .ifMapperAvailableAddEndpoint(DeleteEndpointTypeMapper::new);
         }
 
-        endpoints.ifNotEmpty(e -> {
+        endpoints.ifNotEmpty(endpoints -> {
             try {
-                EndpointIO.writeToFile(e, processingEnv.getFiler());
+                EndpointIO.writeToFile(endpoints, this.processingEnv.getFiler());
             } catch (IOException ex) {
                 Messager messager = this.processingEnv.getMessager();
                 messager.printMessage(ERROR, "Failed to write endpoints in the file");
                 messager.printMessage(ERROR, String.format("Endpoints : [%s]", endpoints));
+            } finally {
+                endpoints.cleanup();
             }
         });
 

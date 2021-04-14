@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.util.Optional.ofNullable;
@@ -34,6 +37,10 @@ public class Endpoints {
         if (!this.rolesByEndpoint.isEmpty()) {
             consumer.accept(this);
         }
+    }
+
+    public void cleanup() {
+        this.rolesByEndpoint.clear();
     }
 
     @Getter

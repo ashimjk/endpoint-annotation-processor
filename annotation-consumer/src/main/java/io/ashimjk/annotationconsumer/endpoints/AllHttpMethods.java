@@ -1,4 +1,4 @@
-package io.ashimjk.annotationconsumer;
+package io.ashimjk.annotationconsumer.endpoints;
 
 import org.springframework.web.bind.annotation.*;
 

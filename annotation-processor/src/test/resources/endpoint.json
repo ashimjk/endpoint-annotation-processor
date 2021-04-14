@@ -1,0 +1,12 @@
+{
+  "/api": {
+    "rolesByMethodType": {
+      "POST": [
+        "post"
+      ],
+      "GET": [
+        "request"
+      ]
+    }
+  }
+}

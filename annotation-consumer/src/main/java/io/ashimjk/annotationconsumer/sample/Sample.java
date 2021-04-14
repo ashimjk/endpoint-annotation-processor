@@ -1,8 +1,8 @@
-package io.ashimjk.annotationconsumer;
+package io.ashimjk.annotationconsumer.sample;
 
 import io.ashimjk.annotationprocessor.sample.BuilderProperty;
 
-public class Person {
+public class Sample {
 
     private int age;
     private String name;

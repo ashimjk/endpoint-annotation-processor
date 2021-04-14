@@ -1,4 +1,4 @@
-package io.ashimjk.annotationconsumer;
+package io.ashimjk.annotationconsumer.endpoints;
 
 import io.ashimjk.annotationprocessor.endpoints.EndpointIO;
 import io.ashimjk.annotationprocessor.endpoints.Endpoints;
