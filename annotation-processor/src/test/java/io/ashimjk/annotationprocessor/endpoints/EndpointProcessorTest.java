@@ -5,8 +5,6 @@ import com.google.testing.compile.JavaFileObjects;
 import com.google.testing.compile.JavaSourceSubjectFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class EndpointProcessorTest {
 
     private final EndpointProcessor endpointProcessor = new EndpointProcessor();
@@ -15,7 +13,7 @@ class EndpointProcessorTest {
     void testEndpointProcessor() {
         Truth.assert_()
                 .about(JavaSourceSubjectFactory.javaSource())
-                .that(JavaFileObjects.forResource("sources/Api.java"))
+                .that(JavaFileObjects.forResource("sources/AllHttpMethods.java"))
                 .processedWith(endpointProcessor)
                 .compilesWithoutError();
     }
