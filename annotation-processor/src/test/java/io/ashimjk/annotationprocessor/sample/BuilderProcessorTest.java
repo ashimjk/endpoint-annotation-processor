@@ -22,7 +22,7 @@ class BuilderProcessorTest {
     void testBuildProcessor() {
         Truth.assert_()
                 .about(javaSource())
-                .that(JavaFileObjects.forResource("sources/Person.java"))
+                .that(JavaFileObjects.forResource("sources/Sample.java"))
                 .processedWith(builderProcessor)
                 .compilesWithoutError();
     }

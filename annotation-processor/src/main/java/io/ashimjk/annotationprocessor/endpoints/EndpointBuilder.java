@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 
 import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.Optional.ofNullable;
@@ -36,9 +36,9 @@ public class EndpointBuilder {
                     Arrays.stream(paths).forEach(path -> {
                         Endpoints.RolesByMethodType rolesByMethodType = endpoints.getRoles(path);
 
-                        List<String> existingRoles = rolesByMethodType.getRoles(methodType);
+                        Set<String> existingRoles = rolesByMethodType.getRoles(methodType);
 
-                        List<String> mergedRoles = new ArrayList<>(existingRoles);
+                        Set<String> mergedRoles = new HashSet<>(existingRoles);
                         mergedRoles.addAll(Arrays.asList(this.roles));
 
                         endpoints.addEndpoint(path, rolesByMethodType.addRolesByMethodType(methodType, mergedRoles));

@@ -2,7 +2,7 @@ package io.ashimjk.annotationprocessor.part1;
 
 import io.ashimjk.annotationprocessor.sample.BuilderProperty;
 
-public class Person {
+public class Sample {
 
     private int age;
     private String name;

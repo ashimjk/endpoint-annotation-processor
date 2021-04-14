@@ -37,8 +37,7 @@ public class EndpointIO {
 
     @SuppressWarnings("nullness")
     public static Endpoints readFromFile() throws IOException {
-        String file = requireNonNull(EndpointIO.class.getClassLoader().getResource(ENDPOINT_FILE_NAME))
-                .getFile();
+        String file = requireNonNull(EndpointIO.class.getClassLoader().getResource(ENDPOINT_FILE_NAME)).getFile();
 
         Map<String, Endpoints.RolesByMethodType> rolesByMethodType = MAPPER.readValue(Paths.get(file).toFile(), new TypeReference<>() {
         });

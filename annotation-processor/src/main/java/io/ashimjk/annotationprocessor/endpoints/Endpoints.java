@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static java.util.Optional.ofNullable;
@@ -44,14 +41,14 @@ public class Endpoints {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class RolesByMethodType {
 
-        private final Map<String, List<String>> rolesByMethodType = new HashMap<>();
+        private final Map<String, Set<String>> rolesByMethodType = new HashMap<>();
 
-        public List<String> getRoles(String methodType) {
+        public Set<String> getRoles(String methodType) {
             return ofNullable(this.rolesByMethodType.get(methodType))
-                    .orElseGet(Collections::emptyList);
+                    .orElseGet(Collections::emptySet);
         }
 
-        public RolesByMethodType addRolesByMethodType(String methodType, List<String> roles) {
+        public RolesByMethodType addRolesByMethodType(String methodType, Set<String> roles) {
             rolesByMethodType.put(methodType, roles);
             return this;
         }
