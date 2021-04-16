@@ -36,12 +36,13 @@ public class EndpointProcessor extends AbstractProcessor {
             String[] roles = annotatedElement.getAnnotation(RolesAllowed.class).value();
 
             EndpointBuilder.of(annotatedElement, endpoints, roles)
-                    .ifMapperAvailableAddEndpoint(RequestEndpointTypeMapper::new)
-                    .ifMapperAvailableAddEndpoint(GetEndpointTypeMapper::new)
-                    .ifMapperAvailableAddEndpoint(PostEndpointTypeMapper::new)
-                    .ifMapperAvailableAddEndpoint(PutEndpointTypeMapper::new)
-                    .ifMapperAvailableAddEndpoint(PatchEndpointTypeMapper::new)
-                    .ifMapperAvailableAddEndpoint(DeleteEndpointTypeMapper::new);
+                    .ifMapperAvailableAddToEndpoints(RequestEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(RequestEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(GetEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(PostEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(PutEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(PatchEndpointTypeMapper::new)
+                    .ifMapperAvailableAddToEndpoints(DeleteEndpointTypeMapper::new);
         }
 
         endpoints.ifNotEmpty(endpoints -> {

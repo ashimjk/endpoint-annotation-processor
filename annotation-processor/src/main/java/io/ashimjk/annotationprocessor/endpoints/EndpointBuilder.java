@@ -4,8 +4,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -23,10 +27,10 @@ public class EndpointBuilder {
         return new EndpointBuilder(annotatedElement, endpoints, roles);
     }
 
-    public <T extends Annotation> EndpointBuilder ifMapperAvailableAddEndpoint(Supplier<EndpointTypeMapper<T>> mapperSupplier) {
+    public <T extends Annotation> EndpointBuilder ifMapperAvailableAddToEndpoints(Supplier<EndpointTypeMapper<T>> mapperSupplier) {
         EndpointTypeMapper<T> mapper = mapperSupplier.get();
 
-        T annotation = annotatedElement.getAnnotation(mapper.getType());
+        T annotation = findAnnotation(annotatedElement, mapper.getType());
 
         ofNullable(annotation)
                 .ifPresent((T mapperAnnotation) -> {
@@ -46,6 +50,22 @@ public class EndpointBuilder {
                 });
 
         return this;
+    }
+
+    @SuppressWarnings("incompatible")
+    private <T extends Annotation> T findAnnotation(Element annotatedElement, Class<T> annotationType) {
+
+        return ofNullable(annotatedElement.getAnnotation(Override.class))
+                .map(e -> ((TypeElement) annotatedElement.getEnclosingElement()).getInterfaces())
+                .stream()
+                .flatMap(Collection::stream)
+                .map(e -> ((DeclaredType) e).asElement())
+                .flatMap(element -> element.getEnclosedElements().stream())
+                .filter(e -> e.getKind() == ElementKind.METHOD)
+                .filter(e -> e.getSimpleName().contentEquals(annotatedElement.getSimpleName()))
+                .findFirst()
+                .map(e -> e.getAnnotation(annotationType))
+                .orElseGet(() -> annotatedElement.getAnnotation(annotationType));
     }
 
 }

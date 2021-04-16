@@ -35,20 +35,15 @@ class EndpointProcessorTest {
     @Test
     @DisplayName("Run Endpoint processor without error")
     void canRunEndpointProcessor_withoutCompilationError() {
-        Truth.assert_()
-                .about(JavaSourceSubjectFactory.javaSource())
-                .that(JavaFileObjects.forResource("sources/AllHttpMethods.java"))
-                .processedWith(endpointProcessor)
-                .compilesWithoutError();
+        runEndpointProcessor("sources/AllHttpMethods.java");
     }
 
     @Test
     @DisplayName("Read @RolesAllowed in All Type of Mapping")
     void canReadRolesAllowedAnnotation_OnAllTypeOfMapping() {
-        doNothing().when(this.endpoints).ifNotEmpty(any(Consumer.class));
-        ReflectionTestUtils.setField(this.endpointProcessor, "endpoints", this.endpoints);
+        mockEndpoints();
 
-        canRunEndpointProcessor_withoutCompilationError();
+        runEndpointProcessor("sources/AllHttpMethods.java");
 
         Map<String, RolesByMethodType> rolesByEndpoint = this.endpoints.getRolesByEndpoint();
         assertThat(rolesByEndpoint).containsKeys("/api", "/api/{id}");
@@ -62,6 +57,37 @@ class EndpointProcessorTest {
         assertThat(rolesByMethodType2).containsEntry("PUT", singleton("put"));
         assertThat(rolesByMethodType2).containsEntry("PATCH", singleton("patch"));
         assertThat(rolesByMethodType2).containsEntry("DELETE", singleton("delete"));
+    }
+
+    @Test
+    @DisplayName("Read @RolesAllowed in Inherited Mapping")
+    void canReadRolesAllowedAnnotation_OnInheritedMapping() {
+        mockEndpoints();
+
+        runEndpointProcessor("sources/InheritedMapping.java");
+
+        Map<String, RolesByMethodType> rolesByEndpoint = this.endpoints.getRolesByEndpoint();
+        assertThat(rolesByEndpoint).containsKeys("/api", "/api/{id}");
+
+        Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/api").getRolesByMethodType();
+        assertThat(rolesByMethodType1).containsEntry("GET", singleton("request"));
+        assertThat(rolesByMethodType1).containsEntry("POST", singleton("post"));
+
+        Map<String, Set<String>> rolesByMethodType2 = rolesByEndpoint.get("/api/{id}").getRolesByMethodType();
+        assertThat(rolesByMethodType2).containsEntry("GET", singleton("get"));
+    }
+
+    private void runEndpointProcessor(String resourceName) {
+        Truth.assert_()
+                .about(JavaSourceSubjectFactory.javaSource())
+                .that(JavaFileObjects.forResource(resourceName))
+                .processedWith(endpointProcessor)
+                .compilesWithoutError();
+    }
+
+    private void mockEndpoints() {
+        doNothing().when(this.endpoints).ifNotEmpty(any(Consumer.class));
+        ReflectionTestUtils.setField(this.endpointProcessor, "endpoints", this.endpoints);
     }
 
 }
