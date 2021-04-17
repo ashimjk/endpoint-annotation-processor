@@ -7,13 +7,13 @@ import java.util.Map;
 
 interface Api {
 
-    @RequestMapping("/api")
+    @RequestMapping("/inherited")
     String requestMethod();
 
-    @GetMapping("/api/{id}")
+    @GetMapping("/inherited/{id}")
     String getMethod(@PathVariable("id") String id);
 
-    @PostMapping("/api")
+    @PostMapping("/inherited")
     void postMethod(@RequestBody Map<String, Object> requestBody);
 
 }
@@ -21,19 +21,19 @@ interface Api {
 public class InheritedMapping implements Api {
 
     @Override
-    @RolesAllowed("request")
+    @RolesAllowed("inherited-request")
     public String requestMethod() {
         return "";
     }
 
     @Override
-    @RolesAllowed("get")
+    @RolesAllowed("inherited-get")
     public String getMethod(String id) {
         return id;
     }
 
     @Override
-    @RolesAllowed("post")
+    @RolesAllowed("inherited-post")
     public void postMethod(Map<String, Object> requestBody) {
     }
 
