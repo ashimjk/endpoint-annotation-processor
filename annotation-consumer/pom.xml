@@ -11,20 +11,22 @@
 
     <artifactId>annotation-consumer</artifactId>
 
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.ashimjk</groupId>
             <artifactId>annotation-processor</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
     </dependencies>
 
+    <!-- Endpoint Annotation Processor Configuration -->
+    <!-- Currently Annotation Processor is running usgin META-INF config -->
+    <!-- Because of which below configuration are not required -->
     <!--<build>-->
     <!--    <plugins>-->
     <!--        <plugin>-->
@@ -36,10 +38,10 @@
     <!--                <target>${java.version}</target>-->
     <!--                <encoding>UTF-8</encoding>-->
     <!--                <generatedSourcesDirectory>${project.build.directory}/generated-sources</generatedSourcesDirectory>-->
-    <!--                &lt;!&ndash;<annotationProcessors>&ndash;&gt;-->
-    <!--                &lt;!&ndash;    <annotationProcessor>io.ashimjk.annotationprocessor.sample.BuilderProcessor&ndash;&gt;-->
-    <!--                &lt;!&ndash;    </annotationProcessor>&ndash;&gt;-->
-    <!--                &lt;!&ndash;</annotationProcessors>&ndash;&gt;-->
+    <!--                <annotationProcessors>-->
+    <!--                    <annotationProcessor>io.ashimjk.annotationprocessor.sample.BuilderProcessor-->
+    <!--                    </annotationProcessor>-->
+    <!--                </annotationProcessors>-->
     <!--            </configuration>-->
     <!--        </plugin>-->
     <!--    </plugins>-->
