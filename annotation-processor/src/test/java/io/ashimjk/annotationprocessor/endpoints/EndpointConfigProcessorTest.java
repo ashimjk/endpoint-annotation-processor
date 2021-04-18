@@ -3,7 +3,7 @@ package io.ashimjk.annotationprocessor.endpoints;
 import com.google.common.truth.Truth;
 import com.google.testing.compile.JavaFileObjects;
 import com.google.testing.compile.JavaSourceSubjectFactory;
-import io.ashimjk.annotationprocessor.endpoints.Endpoints.RolesByMethodType;
+import io.ashimjk.annotationprocessor.endpoints.EndpointConfigs.RolesByMethodType;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,15 +21,15 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 
 @SuppressWarnings({"unchecked", "nullness"})
-class EndpointProcessorTest {
+class EndpointConfigProcessorTest {
 
-    private @MonotonicNonNull Endpoints endpoints;
-    private @MonotonicNonNull EndpointProcessor endpointProcessor;
+    private @MonotonicNonNull EndpointConfigs endpointConfigs;
+    private @MonotonicNonNull EndpointConfigProcessor endpointConfigProcessor;
 
     @BeforeEach
     void setup() {
-        this.endpoints = spy(Endpoints.class);
-        this.endpointProcessor = new EndpointProcessor();
+        this.endpointConfigs = spy(EndpointConfigs.class);
+        this.endpointConfigProcessor = new EndpointConfigProcessor();
     }
 
     @Test
@@ -45,7 +45,7 @@ class EndpointProcessorTest {
 
         runEndpointProcessor("sources/AllHttpMethods.java");
 
-        Map<String, RolesByMethodType> rolesByEndpoint = this.endpoints.getRolesByEndpoint();
+        Map<String, RolesByMethodType> rolesByEndpoint = this.endpointConfigs.getRolesByEndpoint();
         assertThat(rolesByEndpoint).containsKeys("/api", "/api/{id}");
 
         Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/api").getRolesByMethodType();
@@ -66,7 +66,7 @@ class EndpointProcessorTest {
 
         runEndpointProcessor("sources/InheritedMapping.java");
 
-        Map<String, RolesByMethodType> rolesByEndpoint = this.endpoints.getRolesByEndpoint();
+        Map<String, RolesByMethodType> rolesByEndpoint = this.endpointConfigs.getRolesByEndpoint();
         assertThat(rolesByEndpoint).containsKeys("/api", "/api/{id}");
 
         Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/api").getRolesByMethodType();
@@ -81,13 +81,13 @@ class EndpointProcessorTest {
         Truth.assert_()
                 .about(JavaSourceSubjectFactory.javaSource())
                 .that(JavaFileObjects.forResource(resourceName))
-                .processedWith(endpointProcessor)
+                .processedWith(endpointConfigProcessor)
                 .compilesWithoutError();
     }
 
     private void mockEndpoints() {
-        doNothing().when(this.endpoints).ifNotEmpty(any(Consumer.class));
-        ReflectionTestUtils.setField(this.endpointProcessor, "endpoints", this.endpoints);
+        doNothing().when(this.endpointConfigs).ifNotEmpty(any(Consumer.class));
+        ReflectionTestUtils.setField(this.endpointConfigProcessor, "endpoints", this.endpointConfigs);
     }
 
 }

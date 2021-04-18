@@ -17,15 +17,15 @@ import static java.util.Objects.requireNonNull;
 import static javax.tools.StandardLocation.CLASS_OUTPUT;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class EndpointIO {
+public class EndpointConfigIO {
 
     private static final String ENDPOINT_FILE_NAME = "endpoint.json";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static void writeToFile(Endpoints endpoints, Filer filer) throws IOException {
+    public static void writeToFile(EndpointConfigs endpointConfigs, Filer filer) throws IOException {
         String json = MAPPER
                 .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(endpoints.getRolesByEndpoint());
+                .writeValueAsString(endpointConfigs.getRolesByEndpoint());
 
         FileObject fileObject = filer.createResource(CLASS_OUTPUT, "", ENDPOINT_FILE_NAME);
 
@@ -36,13 +36,13 @@ public class EndpointIO {
     }
 
     @SuppressWarnings("nullness")
-    public static Endpoints readFromFile() throws IOException {
-        String file = requireNonNull(EndpointIO.class.getClassLoader().getResource(ENDPOINT_FILE_NAME)).getFile();
+    public static EndpointConfigs readFromFile() throws IOException {
+        String file = requireNonNull(EndpointConfigIO.class.getClassLoader().getResource(ENDPOINT_FILE_NAME)).getFile();
 
-        Map<String, Endpoints.RolesByMethodType> rolesByMethodType = MAPPER.readValue(Paths.get(file).toFile(), new TypeReference<>() {
+        Map<String, EndpointConfigs.RolesByMethodType> rolesByMethodType = MAPPER.readValue(Paths.get(file).toFile(), new TypeReference<>() {
         });
 
-        return new Endpoints(rolesByMethodType);
+        return new EndpointConfigs(rolesByMethodType);
     }
 
 }

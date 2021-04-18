@@ -20,11 +20,11 @@ import static java.util.Optional.ofNullable;
 public class EndpointBuilder {
 
     private final Element annotatedElement;
-    private final Endpoints endpoints;
+    private final EndpointConfigs endpointConfigs;
     private final String[] roles;
 
-    public static EndpointBuilder of(Element annotatedElement, Endpoints endpoints, String[] roles) {
-        return new EndpointBuilder(annotatedElement, endpoints, roles);
+    public static EndpointBuilder of(Element annotatedElement, EndpointConfigs endpointConfigs, String[] roles) {
+        return new EndpointBuilder(annotatedElement, endpointConfigs, roles);
     }
 
     public <T extends Annotation> EndpointBuilder ifMapperAvailableAddToEndpoints(Supplier<EndpointTypeMapper<T>> mapperSupplier) {
@@ -38,14 +38,14 @@ public class EndpointBuilder {
                     String methodType = mapper.getMethodType().apply(mapperAnnotation);
 
                     Arrays.stream(paths).forEach(path -> {
-                        Endpoints.RolesByMethodType rolesByMethodType = endpoints.getRoles(path);
+                        EndpointConfigs.RolesByMethodType rolesByMethodType = endpointConfigs.getRoles(path);
 
                         Set<String> existingRoles = rolesByMethodType.getRoles(methodType);
 
                         Set<String> mergedRoles = new HashSet<>(existingRoles);
                         mergedRoles.addAll(Arrays.asList(this.roles));
 
-                        endpoints.addEndpoint(path, rolesByMethodType.addRolesByMethodType(methodType, mergedRoles));
+                        endpointConfigs.addEndpoint(path, rolesByMethodType.addRolesByMethodType(methodType, mergedRoles));
                     });
                 });
 

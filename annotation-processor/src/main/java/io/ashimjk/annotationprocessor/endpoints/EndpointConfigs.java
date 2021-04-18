@@ -16,16 +16,16 @@ import static java.util.Optional.ofNullable;
 @Getter
 @ToString
 @NoArgsConstructor
-public class Endpoints {
+public class EndpointConfigs {
 
     private Map<String, RolesByMethodType> rolesByEndpoint = new HashMap<>();
 
-    public Endpoints(Map<String, RolesByMethodType> rolesByEndpoint) {
+    public EndpointConfigs(Map<String, RolesByMethodType> rolesByEndpoint) {
         this.rolesByEndpoint = rolesByEndpoint;
     }
 
     public RolesByMethodType getRoles(String endpoint) {
-        return ofNullable(this.rolesByEndpoint.get(endpoint))
+        return ofNullable(this.getRolesByEndpoint().get(endpoint))
                 .orElseGet(RolesByMethodType::new);
     }
 
@@ -33,7 +33,7 @@ public class Endpoints {
         rolesByEndpoint.put(endpoint, rolesByMethodType);
     }
 
-    public void ifNotEmpty(Consumer<Endpoints> consumer) {
+    public void ifNotEmpty(Consumer<EndpointConfigs> consumer) {
         if (!this.rolesByEndpoint.isEmpty()) {
             consumer.accept(this);
         }
@@ -51,7 +51,7 @@ public class Endpoints {
         private final Map<String, Set<String>> rolesByMethodType = new HashMap<>();
 
         public Set<String> getRoles(String methodType) {
-            return ofNullable(this.rolesByMethodType.get(methodType))
+            return ofNullable(this.getRolesByMethodType().get(methodType))
                     .orElseGet(Collections::emptySet);
         }
 

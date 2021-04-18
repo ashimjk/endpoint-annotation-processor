@@ -10,16 +10,16 @@ import java.util.Set;
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EndpointIOTest {
+class EndpointConfigIOTest {
 
     @Test
     @SneakyThrows
     @SuppressWarnings("nullness")
     @DisplayName("Read endpoint processor output file")
     void readEndpointProcessorOutputFile() {
-        Endpoints endpoints = EndpointIO.readFromFile();
+        EndpointConfigs endpointConfigs = EndpointConfigIO.readFromFile();
 
-        Map<String, Endpoints.RolesByMethodType> rolesByEndpoint = endpoints.getRolesByEndpoint();
+        Map<String, EndpointConfigs.RolesByMethodType> rolesByEndpoint = endpointConfigs.getRolesByEndpoint();
         assertThat(rolesByEndpoint).containsKeys("/api");
 
         Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/api").getRolesByMethodType();

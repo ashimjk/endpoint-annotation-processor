@@ -16,6 +16,9 @@ interface Api {
     @PostMapping("/inherited")
     void postMethod(@RequestBody Map<String, Object> requestBody);
 
+    @PutMapping("/inherited/{id}")
+    String putMethod(@PathVariable("id") String id);
+
 }
 
 public class InheritedMapping implements Api {
@@ -35,6 +38,12 @@ public class InheritedMapping implements Api {
     @Override
     @RolesAllowed("inherited-post")
     public void postMethod(Map<String, Object> requestBody) {
+    }
+
+    @Override
+    @RolesAllowed("inherited-put")
+    public String putMethod(String id) {
+        return id;
     }
 
 }

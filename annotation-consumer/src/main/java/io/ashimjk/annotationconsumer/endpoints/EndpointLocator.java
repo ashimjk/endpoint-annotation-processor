@@ -1,7 +1,7 @@
 package io.ashimjk.annotationconsumer.endpoints;
 
-import io.ashimjk.annotationprocessor.endpoints.EndpointIO;
-import io.ashimjk.annotationprocessor.endpoints.Endpoints.RolesByMethodType;
+import io.ashimjk.annotationprocessor.endpoints.EndpointConfigIO;
+import io.ashimjk.annotationprocessor.endpoints.EndpointConfigs.RolesByMethodType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.Link;
@@ -24,7 +24,7 @@ public class EndpointLocator {
 
     @PostConstruct
     public void init() throws IOException {
-        Map<String, RolesByMethodType> rolesByEndpoint = EndpointIO.readFromFile().getRolesByEndpoint();
+        Map<String, RolesByMethodType> rolesByEndpoint = EndpointConfigIO.readFromFile().getRolesByEndpoint();
         log.info("{} links has been read", rolesByEndpoint.size());
 
         for (Map.Entry<String, RolesByMethodType> entry : rolesByEndpoint.entrySet()) {

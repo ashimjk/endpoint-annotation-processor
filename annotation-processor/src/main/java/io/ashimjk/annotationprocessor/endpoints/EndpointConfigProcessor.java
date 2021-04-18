@@ -21,12 +21,12 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 @SupportedAnnotationTypes("javax.annotation.security.RolesAllowed")
-public class EndpointProcessor extends AbstractProcessor {
+public class EndpointConfigProcessor extends AbstractProcessor {
 
-    private final Endpoints endpoints;
+    private final EndpointConfigs endpointConfigs;
 
-    public EndpointProcessor() {
-        endpoints = new Endpoints();
+    public EndpointConfigProcessor() {
+        endpointConfigs = new EndpointConfigs();
     }
 
     @Override
@@ -35,8 +35,7 @@ public class EndpointProcessor extends AbstractProcessor {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(RolesAllowed.class)) {
             String[] roles = annotatedElement.getAnnotation(RolesAllowed.class).value();
 
-            EndpointBuilder.of(annotatedElement, endpoints, roles)
-                    .ifMapperAvailableAddToEndpoints(RequestEndpointTypeMapper::new)
+            EndpointBuilder.of(annotatedElement, endpointConfigs, roles)
                     .ifMapperAvailableAddToEndpoints(RequestEndpointTypeMapper::new)
                     .ifMapperAvailableAddToEndpoints(GetEndpointTypeMapper::new)
                     .ifMapperAvailableAddToEndpoints(PostEndpointTypeMapper::new)
@@ -45,9 +44,9 @@ public class EndpointProcessor extends AbstractProcessor {
                     .ifMapperAvailableAddToEndpoints(DeleteEndpointTypeMapper::new);
         }
 
-        endpoints.ifNotEmpty(endpoints -> {
+        endpointConfigs.ifNotEmpty(endpoints -> {
             try {
-                EndpointIO.writeToFile(endpoints, this.processingEnv.getFiler());
+                EndpointConfigIO.writeToFile(endpoints, this.processingEnv.getFiler());
             } catch (IOException ex) {
                 Messager messager = this.processingEnv.getMessager();
                 messager.printMessage(ERROR, "Failed to write endpoints in the file");
