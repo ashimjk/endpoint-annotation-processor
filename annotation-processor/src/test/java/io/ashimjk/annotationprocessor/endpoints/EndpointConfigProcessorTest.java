@@ -67,14 +67,28 @@ class EndpointConfigProcessorTest {
         runEndpointProcessor("sources/InheritedMapping.java");
 
         Map<String, RolesByMethodType> rolesByEndpoint = this.endpointConfigs.getRolesByEndpoint();
-        assertThat(rolesByEndpoint).containsKeys("/api", "/api/{id}");
+        assertThat(rolesByEndpoint).containsKeys("/inherited", "/inherited/{id}");
 
-        Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/api").getRolesByMethodType();
-        assertThat(rolesByMethodType1).containsEntry("GET", singleton("request"));
-        assertThat(rolesByMethodType1).containsEntry("POST", singleton("post"));
+        Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/inherited").getRolesByMethodType();
+        assertThat(rolesByMethodType1).containsEntry("GET", singleton("inherited-request"));
+        assertThat(rolesByMethodType1).containsEntry("POST", singleton("inherited-post"));
 
-        Map<String, Set<String>> rolesByMethodType2 = rolesByEndpoint.get("/api/{id}").getRolesByMethodType();
-        assertThat(rolesByMethodType2).containsEntry("GET", singleton("get"));
+        Map<String, Set<String>> rolesByMethodType2 = rolesByEndpoint.get("/inherited/{id}").getRolesByMethodType();
+        assertThat(rolesByMethodType2).containsEntry("GET", singleton("inherited-get"));
+    }
+
+    @Test
+    @DisplayName("Read @RolesAllowed using Base Path")
+    void canReadRolesAllowedAnnotation_WithBasePathDefined() {
+        mockEndpoints();
+
+        runEndpointProcessor("sources/ParentApi.java");
+
+        Map<String, RolesByMethodType> rolesByEndpoint = this.endpointConfigs.getRolesByEndpoint();
+        assertThat(rolesByEndpoint).containsKeys("/parent/api");
+
+        Map<String, Set<String>> rolesByMethodType1 = rolesByEndpoint.get("/parent/api").getRolesByMethodType();
+        assertThat(rolesByMethodType1).containsEntry("GET", singleton("parent-request"));
     }
 
     private void runEndpointProcessor(String resourceName) {
@@ -87,7 +101,7 @@ class EndpointConfigProcessorTest {
 
     private void mockEndpoints() {
         doNothing().when(this.endpointConfigs).ifNotEmpty(any(Consumer.class));
-        ReflectionTestUtils.setField(this.endpointConfigProcessor, "endpoints", this.endpointConfigs);
+        ReflectionTestUtils.setField(this.endpointConfigProcessor, "endpointConfigs", this.endpointConfigs);
     }
 
 }

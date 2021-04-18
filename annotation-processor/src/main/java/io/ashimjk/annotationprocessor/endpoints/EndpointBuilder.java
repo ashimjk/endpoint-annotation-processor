@@ -2,6 +2,7 @@ package io.ashimjk.annotationprocessor.endpoints;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -30,6 +31,7 @@ public class EndpointBuilder {
     public <T extends Annotation> EndpointBuilder ifMapperAvailableAddToEndpoints(Supplier<EndpointTypeMapper<T>> mapperSupplier) {
         EndpointTypeMapper<T> mapper = mapperSupplier.get();
 
+        String basePath = getBasePath();
         T annotation = findAnnotation(annotatedElement, mapper.getType());
 
         ofNullable(annotation)
@@ -38,14 +40,15 @@ public class EndpointBuilder {
                     String methodType = mapper.getMethodType().apply(mapperAnnotation);
 
                     Arrays.stream(paths).forEach(path -> {
-                        EndpointConfigs.RolesByMethodType rolesByMethodType = endpointConfigs.getRoles(path);
+                        String fullPath = basePath + path;
+                        EndpointConfigs.RolesByMethodType rolesByMethodType = endpointConfigs.getRoles(fullPath);
 
                         Set<String> existingRoles = rolesByMethodType.getRoles(methodType);
 
                         Set<String> mergedRoles = new HashSet<>(existingRoles);
                         mergedRoles.addAll(Arrays.asList(this.roles));
 
-                        endpointConfigs.addEndpoint(path, rolesByMethodType.addRolesByMethodType(methodType, mergedRoles));
+                        endpointConfigs.addEndpoint(fullPath, rolesByMethodType.addRolesByMethodType(methodType, mergedRoles));
                     });
                 });
 
@@ -66,6 +69,15 @@ public class EndpointBuilder {
                 .findFirst()
                 .map(e -> e.getAnnotation(annotationType))
                 .orElseGet(() -> annotatedElement.getAnnotation(annotationType));
+    }
+
+    private String getBasePath() {
+        return ofNullable(annotatedElement.getEnclosingElement().getAnnotation(RequestMapping.class))
+                .map(RequestMapping::value)
+                .stream()
+                .map(r -> String.join("", r))
+                .findFirst()
+                .orElse("");
     }
 
 }
